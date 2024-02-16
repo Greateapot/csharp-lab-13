@@ -2,7 +2,7 @@ using ConsoleIOLib;
 using Lab10Lib.Exceptions;
 using Lab10Lib.Utils;
 
-namespace Lab10Lib.Models
+namespace Lab10Lib.Entities
 {
     public class Person : IEquatable<Person>, IComparable<Person>, ICloneable
     {

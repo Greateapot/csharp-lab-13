@@ -9,7 +9,7 @@ namespace Lab12Lib.BinaryTree
         public int Count { get; private set; }
         public int Capacity { get; private set; }
         public bool IsReadOnly { get; set; }
-        private bool IsDisposed = false;
+        protected bool IsDisposed = false;
 
         private BinaryTreeNode<T>? Root { get; set; }
 
@@ -181,7 +181,7 @@ namespace Lab12Lib.BinaryTree
             GC.SuppressFinalize(this);
         }
 
-        private void Dispose(bool disposing)
+        protected virtual void Dispose(bool disposing)
         {
             if (IsDisposed) return;
             if (disposing)

@@ -2,44 +2,44 @@ using ConsoleIOLib;
 using Lab10Lib.Exceptions;
 using Lab10Lib.Utils;
 
-namespace Lab10Lib.Models
+namespace Lab10Lib.Entities
 {
-    public class Pupil : Person, IEquatable<Pupil>, IComparable<Pupil>, ICloneable
+    public class Student : Person, IEquatable<Student>, IComparable<Student>, ICloneable
     {
         public const float MinRating = 0;
         public const float MaxRating = 5;
 
         private float rating;
-        private uint schoolID;
+        private uint universityID;
 
-        public Pupil(string firstName, string lastName, byte age, float rating, uint schoolID) : base(firstName, lastName, age)
+        public Student(string firstName, string lastName, byte age, float rating, uint universityID) : base(firstName, lastName, age)
         {
             Rating = rating;
-            SchoolID = schoolID;
+            UniversityID = universityID;
         }
 
-        public Pupil() { }
+        public Student() { }
 
         public float Rating
         {
             get => rating;
             set => rating = value < MinRating || value > MaxRating ? throw new InvalidFieldValueException() : value;
         }
-        public uint SchoolID
+        public uint UniversityID
         {
-            get => schoolID;
-            set => schoolID = value == 0 ? throw new InvalidFieldValueException() : value;
+            get => universityID;
+            set => universityID = value == 0 ? throw new InvalidFieldValueException() : value;
         }
 
-        public override string ToString() => $"Pupil#{GetHashCode()}(lastName: \"{LastName}\", firstName: \"{FirstName}\", age: {Age}, rating: {Rating}, schoolID: {SchoolID})";
+        public override string ToString() => $"Student#{GetHashCode()}(lastName: \"{LastName}\", firstName: \"{FirstName}\", age: {Age}, rating: {Rating}, universityID: {UniversityID})";
 
-        public override int GetHashCode() => (FirstName, LastName, Age, Rating, SchoolID).GetHashCode();
+        public override int GetHashCode() => (FirstName, LastName, Age, Rating, UniversityID).GetHashCode();
 
-        public override bool Equals(object? obj) => obj is Pupil other && Equals(other);
+        public override bool Equals(object? obj) => obj is Student other && Equals(other);
 
-        public bool Equals(Pupil? other) => other is not null && CompareTo(other) == 0;
+        public bool Equals(Student? other) => other is not null && CompareTo(other) == 0;
 
-        public int CompareTo(Pupil? other)
+        public int CompareTo(Student? other)
         {
             if (other is null) return 1;
             if (ReferenceEquals(other, this)) return 0;
@@ -58,27 +58,27 @@ namespace Lab10Lib.Models
             c = Rating.CompareTo(other.Rating);
             if (c != 0) return c;
 
-            c = SchoolID.CompareTo(other.SchoolID);
+            c = UniversityID.CompareTo(other.UniversityID);
             if (c != 0) return c;
 
             return 0;
         }
 
-        public new object Clone() => new Pupil(FirstName, LastName, Age, Rating, SchoolID);
+        public new object Clone() => new Student(FirstName, LastName, Age, Rating, UniversityID);
 
-        public static bool operator ==(Pupil left, Pupil right) => left is null ? right is null : left.Equals(right);
+        public static bool operator ==(Student left, Student right) => left is null ? right is null : left.Equals(right);
 
-        public static bool operator !=(Pupil left, Pupil right) => !(left == right);
+        public static bool operator !=(Student left, Student right) => !(left == right);
 
-        public static bool operator <(Pupil left, Pupil right) => left.CompareTo(right) < 0;
+        public static bool operator <(Student left, Student right) => left.CompareTo(right) < 0;
 
-        public static bool operator >(Pupil left, Pupil right) => left.CompareTo(right) > 0;
+        public static bool operator >(Student left, Student right) => left.CompareTo(right) > 0;
 
-        public static bool operator <=(Pupil left, Pupil right) => left.CompareTo(right) <= 0;
+        public static bool operator <=(Student left, Student right) => left.CompareTo(right) <= 0;
 
-        public static bool operator >=(Pupil left, Pupil right) => left.CompareTo(right) >= 0;
+        public static bool operator >=(Student left, Student right) => left.CompareTo(right) >= 0;
 
-        public static new Pupil Init() => new()
+        public static new Student Init() => new()
         {
             FirstName = ConsoleIO.InputRaw("Введите имя: "),
             LastName = ConsoleIO.InputRaw("Введите фамилию: "),
@@ -94,21 +94,21 @@ namespace Lab10Lib.Models
                     ? null
                     : "Недопустимое значение!"
             ),
-            SchoolID = ConsoleIO.Input<uint>(
-                "Введите идентификатор школы (число > 0): ",
+            UniversityID = ConsoleIO.Input<uint>(
+                "Введите идентификатор университета (число > 0): ",
                 v => v > 0
                     ? null
                     : "Недопустимое значение!"
             ),
         };
 
-        public static new Pupil RandomInit() => new()
+        public static new Student RandomInit() => new()
         {
             FirstName = RandomFieldGenerator.FirstName(),
             LastName = RandomFieldGenerator.LastName(),
             Age = RandomFieldGenerator.Age(MinAge, MaxAge),
             Rating = RandomFieldGenerator.Rating(MinRating, MaxRating),
-            SchoolID = RandomFieldGenerator.SchoolID(),
+            UniversityID = RandomFieldGenerator.UniversityID(),
         };
     }
 }

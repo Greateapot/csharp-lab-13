@@ -1,4 +1,4 @@
-using Lab10Lib.Models;
+using Lab10Lib.Entities;
 using Lab12Lib.BinaryTree;
 
 namespace Lab13
@@ -8,6 +8,8 @@ namespace Lab13
         public delegate void PersonTreeEventHandler(object source, PersonTreeEventArgs args);
 
         public event PersonTreeEventHandler? CountChanged = null;
+
+        public event PersonTreeEventHandler? TreeDisposed = null;
 
         public string GlobalKey { get; private set; }
 
@@ -22,6 +24,19 @@ namespace Lab13
 
         public virtual void OnCountChanged(object source, PersonTreeEventArgs args)
             => CountChanged?.Invoke(source, args);
+
+        public virtual void OnTreeDisposed(object source, PersonTreeEventArgs args)
+            => TreeDisposed?.Invoke(source, args);
+
+        protected override void Dispose(bool disposing)
+        {
+            if (IsDisposed) return;
+            if (disposing)
+            {
+                OnTreeDisposed(this, new PersonTreeEventArgs(GlobalKey, "disposed", null));
+                base.Dispose(disposing);
+            }
+        }
 
         public new void Add(Person item)
         {

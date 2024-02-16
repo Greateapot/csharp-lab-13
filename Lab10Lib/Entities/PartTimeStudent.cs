@@ -1,7 +1,7 @@
 using ConsoleIOLib;
 using Lab10Lib.Utils;
 
-namespace Lab10Lib.Models
+namespace Lab10Lib.Entities
 {
     public class PartTimeStudent : Student, IEquatable<PartTimeStudent>, IComparable<PartTimeStudent>, ICloneable
     {
