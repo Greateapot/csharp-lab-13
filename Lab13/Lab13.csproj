@@ -5,6 +5,7 @@
     <ProjectReference Include="..\Lab10Lib\Lab10Lib.csproj" />
     <ProjectReference Include="..\..\..\ConsoleIOLib\ConsoleIOLib\ConsoleIOLib.csproj" />
     <ProjectReference Include="..\..\..\ConsoleDialogLib\ConsoleDialogLib\ConsoleDialogLib.csproj" />
+    <ProjectReference Include="..\Lab13Lib\Lab13Lib.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

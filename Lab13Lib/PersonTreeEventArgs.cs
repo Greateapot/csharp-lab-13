@@ -1,4 +1,4 @@
-namespace Lab13
+namespace Lab13Lib
 {
     public class PersonTreeEventArgs(string treeGlobalKey, string eventType, object? obj) : EventArgs
     {

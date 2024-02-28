@@ -12,7 +12,7 @@ namespace Lab10Lib.Entities
         private float rating;
         private uint schoolID;
 
-        public Pupil(string firstName, string lastName, byte age, float rating, uint schoolID) : base(firstName, lastName, age)
+        public Pupil(string firstName, string lastName, int age, float rating, uint schoolID) : base(firstName, lastName, age)
         {
             Rating = rating;
             SchoolID = schoolID;
@@ -23,7 +23,7 @@ namespace Lab10Lib.Entities
         public float Rating
         {
             get => rating;
-            set => rating = value < MinRating || value > MaxRating ? throw new InvalidFieldValueException() : value;
+            set => rating = value < MinRating || value > MaxRating ? throw new InvalidFieldValueException() :  (float)Math.Round(value, 2);
         }
         public uint SchoolID
         {
@@ -82,7 +82,7 @@ namespace Lab10Lib.Entities
         {
             FirstName = ConsoleIO.InputRaw("Введите имя: "),
             LastName = ConsoleIO.InputRaw("Введите фамилию: "),
-            Age = ConsoleIO.Input<byte>(
+            Age = ConsoleIO.Input<int>(
                 $"Введите возраст ({MinAge} <= значение <= {MaxAge}): ",
                 v => v >= MinAge && v <= MaxAge
                     ? null

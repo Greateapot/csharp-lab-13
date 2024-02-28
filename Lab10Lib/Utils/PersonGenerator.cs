@@ -1,4 +1,3 @@
-using ConsoleIOLib;
 using Lab10Lib.Entities;
 
 namespace Lab10Lib.Utils
@@ -25,20 +24,9 @@ namespace Lab10Lib.Utils
         {
             Person[] persons = new Person[count];
             for (int index = 0; index < count; index++)
-
-                persons[index] = InputPersonType() switch
-                {
-                    1 => Person.Init(),
-                    2 => Pupil.Init(),
-                    3 => Student.Init(),
-                    _ => PartTimeStudent.Init(),
-                };
+            
+                persons[index] = Person.Init();
             return persons;
         }
-
-        private static int InputPersonType() => ConsoleIO.Input<int>(
-            "Person types:\n1. Person\n2. Pupil\n3. Student\n4. PartTimeStudent\nChoice Person type: ",
-            v => v < 1 || v > 4 ? "Invalid value." : null
-        );
     }
 }

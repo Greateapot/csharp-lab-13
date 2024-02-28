@@ -7,7 +7,7 @@ namespace Lab10Lib.Entities
     {
         private int randomID;
 
-        public PartTimeStudent(string firstName, string lastName, byte age, float rating, uint universityID, int randomID) : base(firstName, lastName, age, rating, universityID)
+        public PartTimeStudent(string firstName, string lastName, int age, float rating, uint universityID, int randomID) : base(firstName, lastName, age, rating, universityID)
         {
             RandomID = randomID;
         }
@@ -74,7 +74,7 @@ namespace Lab10Lib.Entities
         {
             FirstName = ConsoleIO.InputRaw("Введите имя: "),
             LastName = ConsoleIO.InputRaw("Введите фамилию: "),
-            Age = ConsoleIO.Input<byte>(
+            Age = ConsoleIO.Input<int>(
                 $"Введите возраст ({MinAge} <= значение <= {MaxAge}): ",
                 v => v >= MinAge && v <= MaxAge
                     ? null

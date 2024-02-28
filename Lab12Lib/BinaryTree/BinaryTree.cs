@@ -4,22 +4,33 @@ using Lab12Lib.Exceptions;
 namespace Lab12Lib.BinaryTree
 {
     public partial class BinaryTree<T> : ICollection<T>, ICloneable, IDisposable, IEquatable<BinaryTree<T>>
-    where T : IComparable<T>, ICloneable, new()
+    where T : ICloneable, new()
     {
         public int Count { get; private set; }
         public int Capacity { get; private set; }
         public bool IsReadOnly { get; set; }
         protected bool IsDisposed = false;
 
-        private BinaryTreeNode<T>? Root { get; set; }
+        protected IComparer<T> Comparer { get; set; }
 
-        public BinaryTree() => Capacity = -1;
+        protected BinaryTreeNode<T>? Root { get; set; }
 
-        public BinaryTree(int capacity) => Capacity = capacity;
+        public BinaryTree(IComparer<T> comparer)
+        {
+            Capacity = -1;
+            Comparer = comparer;
+        }
+
+        public BinaryTree(IComparer<T> comparer, int capacity)
+        {
+            Capacity = capacity;
+            Comparer = comparer;
+        }
 
         public BinaryTree(BinaryTree<T> collection)
         {
             Capacity = collection.Capacity;
+            Comparer = collection.Comparer;
             foreach (var item in collection)
                 Add((T)item.Clone());
         }
@@ -41,7 +52,7 @@ namespace Lab12Lib.BinaryTree
                 Count++;
                 return new(item);
             }
-            var r = item.CompareTo(node.Value);
+            var r = Comparer.Compare(item, node.Value);
             if (r < 0)
             {
                 node.Left = Add(node.Left, item);
@@ -66,7 +77,7 @@ namespace Lab12Lib.BinaryTree
             if (IsReadOnly) throw new CollectionIsReadOnlyException();
             if (Root == null) return false;
 
-            var (newRoot, result) = BinaryTree<T>.Remove(Root, item);
+            var (newRoot, result) = Remove(Root, item);
             if (result)
             {
                 Root = newRoot;
@@ -75,15 +86,15 @@ namespace Lab12Lib.BinaryTree
             return result;
         }
 
-        private static (BinaryTreeNode<T>?, bool) Remove(BinaryTreeNode<T> node, T item)
+        private (BinaryTreeNode<T>?, bool) Remove(BinaryTreeNode<T> node, T item)
         {
-            var r = item.CompareTo(node.Value);
+            var r = Comparer.Compare(item, node.Value);
             if (r < 0)
             {
                 if (node.Left == null)
                     return (null, false);
 
-                var (newNode, result) = BinaryTree<T>.Remove(node.Left, item);
+                var (newNode, result) = Remove(node.Left, item);
                 node.Left = newNode;
 
                 if (node.Right != null && BalanceFactor(node) < -1)
@@ -98,7 +109,7 @@ namespace Lab12Lib.BinaryTree
                 if (node.Right == null)
                     return (null, false);
 
-                var (newNode, result) = BinaryTree<T>.Remove(node.Right, item);
+                var (newNode, result) = Remove(node.Right, item);
                 node.Right = newNode;
 
                 if (node.Left != null && BalanceFactor(node) > 1)
@@ -117,7 +128,7 @@ namespace Lab12Lib.BinaryTree
                 while (leaf.Left != null)
                     leaf = leaf.Left;
                 node.Value = leaf.Value;
-                var (newNode, result) = BinaryTree<T>.Remove(node.Right, leaf.Value);
+                var (newNode, result) = Remove(node.Right, leaf.Value);
                 node.Right = newNode;
 
                 if (node.Left != null && BalanceFactor(node) > 1)
@@ -149,7 +160,7 @@ namespace Lab12Lib.BinaryTree
 
         public BinaryTree<T> ShallowCopy()
         {
-            BinaryTree<T> tree = new(Capacity);
+            BinaryTree<T> tree = new(Comparer, Capacity);
             foreach (var item in this) tree.Add(item);
             return tree;
         }
@@ -161,7 +172,7 @@ namespace Lab12Lib.BinaryTree
             var flag = false;
             do
             {
-                var r = item.CompareTo(node.Value);
+                var r = Comparer.Compare(item, node.Value);
                 if (r > 0) node = node.Right;
                 else if (r < 0) node = node.Left;
                 else flag = true;
@@ -208,18 +219,24 @@ namespace Lab12Lib.BinaryTree
             return result;
         }
 
-        private static IEnumerable<T> InOrderTraverse(BinaryTreeNode<T> node)
+        public int GetLeafCount() => Root == null
+            ? 0
+            : InOrderTraverse(Root, e => e.Left == null && e.Right == null ? 1 : 0).Sum();
+
+        private static IEnumerable<R> InOrderTraverse<R>(BinaryTreeNode<T> node, Func<BinaryTreeNode<T>, R> func)
         {
             if (node.Left != null)
-                foreach (var item in InOrderTraverse(node.Left))
+                foreach (var item in InOrderTraverse(node.Left, func))
                     yield return item;
-            yield return node.Value;
+            yield return func(node);
             if (node.Right != null)
-                foreach (var item in InOrderTraverse(node.Right))
+                foreach (var item in InOrderTraverse(node.Right, func))
                     yield return item;
         }
 
-        public IEnumerator<T> GetEnumerator() => (Root == null ? [] : InOrderTraverse(Root)).GetEnumerator();
+        public IEnumerator<T> GetEnumerator() => (
+            Root == null ? [] : InOrderTraverse(Root, e => e.Value)
+        ).GetEnumerator();
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
 

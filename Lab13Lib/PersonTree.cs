@@ -1,7 +1,9 @@
 using Lab10Lib.Entities;
+using Lab10Lib.Utils;
 using Lab12Lib.BinaryTree;
+using Lab12Lib.Exceptions;
 
-namespace Lab13
+namespace Lab13Lib
 {
     public class PersonTree : BinaryTree<Person>
     {
@@ -13,14 +15,14 @@ namespace Lab13
 
         public string GlobalKey { get; private set; }
 
-        public PersonTree(string? key = null) : base()
-            => GlobalKey = key ?? $"GlobalKey#{GetHashCode()}";
+        public PersonTree(string key) : base(new PersonComparerOut())
+            => GlobalKey = key;
 
-        public PersonTree(int capacity, string? key = null) : base(capacity)
-            => GlobalKey = key ?? $"GlobalKey#{GetHashCode()}";
+        public PersonTree(int capacity, string key) : base(new PersonComparerIn(), capacity)
+            => GlobalKey = key;
 
-        public PersonTree(BinaryTree<Person> collection, string? key = null) : base(collection)
-            => GlobalKey = key ?? $"GlobalKey#{GetHashCode()}";
+        public PersonTree(BinaryTree<Person> collection, string key) : base(collection)
+            => GlobalKey = key;
 
         public virtual void OnCountChanged(object source, PersonTreeEventArgs args)
             => CountChanged?.Invoke(source, args);
@@ -60,27 +62,28 @@ namespace Lab13
             return removed;
         }
 
+        public Person? FindByLastName(string lastName)
+        {
+            foreach (var item in this)
+                if (item.LastName == lastName)
+                    return item;
+            return null;
+        }
+
+        public new void Clear()
+        {
+            if (IsReadOnly)
+                throw new CollectionIsReadOnlyException();
+            while (Root != null)
+                Remove(Root.Value);
+        }
+
         public new bool[] RemoveAll(params Person[] items)
         {
             var result = new bool[items.Length];
             for (int i = 0; i < items.Length; i++)
                 result[i] = Remove(items[i]);
             return result;
-        }
-
-        public bool Remove(int num)
-        {
-            if (num < 1 || num > Count) return false;
-            var enumerator = GetEnumerator();
-            var counter = 0;
-            Person? person = null;
-            while (counter != num && enumerator.MoveNext())
-            {
-                counter++;
-                person = enumerator.Current;
-            }
-            if (person is null) throw new Exception("Something went wrong"); // не выбросится никогда
-            return Remove(person);
         }
     }
 }

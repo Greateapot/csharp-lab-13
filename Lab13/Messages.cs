@@ -5,7 +5,7 @@ namespace Lab13
         public const string BooleanDialogYes = "Да";
         public const string BooleanDialogNo = "Нет";
 
-        public const string Task4DialogTitle = "Работа с обобщенной коллекцией:";
+        // public const string Task4DialogTitle = "Работа с обобщенной коллекцией:";
         public const string Task4DialogOptionInitUnlimited = "Создать пустую неограниченную коллекцию";
         public const string Task4DialogOptionInitLimited = "Создать пустую ограниченную коллекцию";
         public const string Task4DialogOptionMakeReadOnly = "Сделать коллекцию доступной только для чтения/для чтения и записи";
@@ -32,7 +32,7 @@ namespace Lab13
         public const string CollectionIsReadOnlyException = "Ошибка: коллекция доступна только для чтения.";
 
 
-        public const string PrintTree = "Бинарное дерево:\n{0}\n";
+        public const string PrintTree = "\n\nБинарное дерево:\n{0}\n";
 
         public const string Task4ProcessTreeAlreadyExists = "Дерево уже существует.";
         public const string Task4ProcessTreeNotExists = "Дерево не существует.";
@@ -46,6 +46,6 @@ namespace Lab13
         public const string Task4ProcessIsTreeCloneEquals = "Эквивалентен ли клон дерева дереву: {0}";
         public const string Task4ProcessIsTreeCopyEquals = "Эквивалентна ли копия дерева дереву: {0}";
 
-        public const string DialogSubTitle = "Бинарное дерево:\n{0}\nЖурнал {1}:\n{2}\n\nЖурнал {3}:\n{4}";
+        public const string DialogTitle = "Журнал {0}:\n{1}\n\nЖурнал {2}:\n{3}\n\nРабота с обобщенной коллекцией:";
     }
 }

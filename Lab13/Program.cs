@@ -2,9 +2,9 @@ using ConsoleIOLib;
 using ConsoleDialogLib;
 
 using Lab10Lib.Entities;
-
-using Lab12Lib.Exceptions;
 using Lab10Lib.Utils;
+using Lab12Lib.Exceptions;
+using Lab13Lib;
 
 namespace Lab13
 {
@@ -39,14 +39,13 @@ namespace Lab13
 
         private static void Main()
         {
-
             PersonTree? tree = null;
             Journal ja = new("Journal A");
             Journal jb = new("Journal B");
             var exit = false;
 
             ConsoleDialog dialog = new(
-                Messages.Task4DialogTitle,
+                "",
                 [
                     new(Messages.Task4DialogOptionInitUnlimited, _ => Task4ProcessInitUnlimited(ref tree, ref ja, ref jb), true, true, true),
                     new(Messages.Task4DialogOptionInitLimited, _ => Task4ProcessInitLimited(ref tree, ref ja, ref jb), true, true, true),
@@ -55,7 +54,7 @@ namespace Lab13
                     new(Messages.Task4DialogOptionRemove, _ => Task4ProcessRemove(ref tree), true, true, true),
                     new(Messages.Task4DialogOptionClear, _ => Task4ProcessClear(ref tree), true, true, true),
                     new(Messages.Task4DialogOptionContains, _ => Task4ProcessContains(ref tree), true, true, true),
-                    new(Messages.Task4DialogOptionCompareWithCopies, _ => Task4ProcessCompareWithCopies(ref tree), true, true, true),
+                    // new(Messages.Task4DialogOptionCompareWithCopies, _ => Task4ProcessCompareWithCopies(ref tree), true, true, true),
                     new(Messages.Task4DialogOptionDispose, _ =>Task4ProcessDispose(ref tree), true, true, true),
                     new(Messages.Task4DialogOptionExit, _ => exit = true, true, true, true),
                 ],
@@ -64,14 +63,12 @@ namespace Lab13
 
             do
             {
-                dialog.SubTitle = string.Format(
-                    Messages.DialogSubTitle,
-                    tree,
+                dialog.WelcomeMessage = string.Format(Messages.DialogTitle,
                     ja.GlobalKey,
                     string.Join('\n', ja.Select(v => v.ToString())),
                     jb.GlobalKey,
-                    string.Join('\n', jb.Select(v => v.ToString()))
-                );
+                    string.Join('\n', jb.Select(v => v.ToString())));
+                dialog.SubTitle = string.Format(Messages.PrintTree, tree);
                 ConsoleDialog.ShowDialog(dialog);
                 dialog.Reset();
             } while (!exit);
@@ -85,7 +82,7 @@ namespace Lab13
                 ConsoleIO.WriteLine(Messages.Task4ProcessTreeAlreadyExists);
             else
             {
-                tree = []; // net8.0 угарает
+                tree = new("treeKey");
                 tree.CountChanged += ja.CountChanged;
                 tree.CountChanged += jb.CountChanged;
                 tree.TreeDisposed += jb.TreeDisposed;
@@ -98,7 +95,7 @@ namespace Lab13
                 ConsoleIO.WriteLine(Messages.Task4ProcessTreeAlreadyExists);
             else
             {
-                tree = new(InputCapacity());
+                tree = new(InputCapacity(), "treeKey");
                 tree.CountChanged += ja.CountChanged;
                 tree.CountChanged += jb.CountChanged;
                 tree.TreeDisposed += jb.TreeDisposed;
@@ -150,7 +147,7 @@ namespace Lab13
             }
             try
             {
-                tree.AddAll(PersonGenerator.GetPerson(InputCount(tree.Capacity)));
+                tree.RemoveAll(PersonGenerator.GetPerson(InputCount(tree.Capacity)));
                 ConsoleIO.WriteLine(Messages.Task4ProcessItemRemoved);
             }
             catch (CollectionIsReadOnlyException)

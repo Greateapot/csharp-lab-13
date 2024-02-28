@@ -6,14 +6,14 @@ namespace Lab10Lib.Entities
 {
     public class Person : IEquatable<Person>, IComparable<Person>, ICloneable
     {
-        public const byte MinAge = 1;
-        public const byte MaxAge = 120;
+        public const int MinAge = 1;
+        public const int MaxAge = 120;
 
         private string? firstName;
         private string? lastName;
-        private byte age;
+        private int age;
 
-        public Person(string firstName, string lastName, byte age)
+        public Person(string firstName, string lastName, int age)
         {
             FirstName = firstName;
             LastName = lastName;
@@ -32,12 +32,18 @@ namespace Lab10Lib.Entities
             get => lastName ?? "--";
             set => lastName = value.Length == 0 ? throw new InvalidFieldValueException() : value;
         }
-        public byte Age
+        public int Age
         {
             get => age;
             set => age = value < MinAge || value > MaxAge ? throw new InvalidFieldValueException() : value;
         }
 
+        public virtual Person ToPerson() => new()
+        {
+            FirstName = FirstName,
+            LastName = LastName,
+            Age = Age,
+        };
         public override string ToString() => $"Person#{GetHashCode()}(lastName: \"{LastName}\", firstName: \"{FirstName}\", age: {Age})";
 
         public override int GetHashCode() => (FirstName, LastName, Age).GetHashCode();
@@ -46,24 +52,7 @@ namespace Lab10Lib.Entities
 
         public bool Equals(Person? other) => other is not null && CompareTo(other) == 0;
 
-        public int CompareTo(Person? other)
-        {
-            if (other is null) return 1;
-            if (ReferenceEquals(other, this)) return 0;
-
-            int c;
-
-            c = FirstName.CompareTo(other.FirstName);
-            if (c != 0) return c;
-
-            c = LastName.CompareTo(other.LastName);
-            if (c != 0) return c;
-
-            c = Age.CompareTo(other.Age);
-            if (c != 0) return c;
-
-            return 0;
-        }
+        public int CompareTo(Person? other) => new PersonComparerIn().Compare(this, other);
 
         public object Clone() => new Person(FirstName, LastName, Age);
 
@@ -83,7 +72,7 @@ namespace Lab10Lib.Entities
         {
             FirstName = ConsoleIO.InputRaw("Введите имя: "),
             LastName = ConsoleIO.InputRaw("Введите фамилию: "),
-            Age = ConsoleIO.Input<byte>(
+            Age = ConsoleIO.Input<int>(
                 $"Введите возраст ({MinAge} <= значение <= {MaxAge}): ",
                 v => v >= MinAge && v <= MaxAge
                     ? null
@@ -91,7 +80,8 @@ namespace Lab10Lib.Entities
             ),
         };
 
-        public static Person RandomInit() => new() {
+        public static Person RandomInit() => new()
+        {
             FirstName = RandomFieldGenerator.FirstName(),
             LastName = RandomFieldGenerator.LastName(),
             Age = RandomFieldGenerator.Age(MinAge, MaxAge),
