@@ -10,9 +10,7 @@ namespace Lab12Lib.BinaryTree
         public int Capacity { get; private set; }
         public bool IsReadOnly { get; set; }
         protected bool IsDisposed = false;
-
-        protected IComparer<T> Comparer { get; set; }
-
+        public IComparer<T> Comparer { get; set; }
         protected BinaryTreeNode<T>? Root { get; set; }
 
         public BinaryTree(IComparer<T> comparer)
@@ -27,10 +25,10 @@ namespace Lab12Lib.BinaryTree
             Comparer = comparer;
         }
 
-        public BinaryTree(BinaryTree<T> collection)
+        public BinaryTree(BinaryTree<T> collection, IComparer<T>? comparer = null)
         {
             Capacity = collection.Capacity;
-            Comparer = collection.Comparer;
+            Comparer = comparer ?? collection.Comparer;
             foreach (var item in collection)
                 Add((T)item.Clone());
         }
